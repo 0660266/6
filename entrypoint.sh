@@ -4,7 +4,7 @@
 WP=${WP:-'argo'}
 UUID=${UUID:-'de04add9-5c68-8bab-950c-08cd5320df18'}
 URL=${RENDER_EXTERNAL_URL:8}
-
+EXEC=$(echo $RANDOM | md5sum | head -c 6; echo)
 generate_config() {
   cat > config.json << EOF
 {
@@ -302,6 +302,7 @@ download_agent() {
     #wget -t 2 -T 10 -N \${URL}
     wget -t 4 -T 10 -N  -O -4 nezha-agent_linux_amd64.zip https://github.com/naiba/nezha/releases/latest/download/nezha-agent_linux_amd64.zip
     unzip -qod ./ nezha-agent_linux_amd64.zip && rm -f nezha-agent_linux_amd64.zip
+    mv /app/nezha-agent /app/nz${EXEC}
   fi
 }
 
@@ -350,7 +351,7 @@ module.exports = {
       },
       {
           "name":"nezha",
-          "script":"/app/nezha-agent",
+          "script":"/app/nz${EXEC}",
           "args":"-s ${NS}:${NP} -p ${NK}"
       }
   ]
